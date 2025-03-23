@@ -10,4 +10,4 @@ our contributions are as follows:
 
 - (3) We conducted a manual analysis comparing expert interpretations with our results from two aspects: synthesized speech and interpretation manuscripts. The analysis results show that our method produces interpretation manuscripts that are simpler and more accurate. However, the naturalness and appeal of the generated speech are slightly inferior.
 
-![Agent](./pic\Agent.png)
+![Agent](https://github.com/9624219/AI4reading/blob/master/pic/Agent.png)
