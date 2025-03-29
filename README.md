@@ -24,13 +24,11 @@ pip install -r requirement.txt
 
 ```python
 def Qwen_Generate(prompt_text,system_text):
-    prompt_text = prompt_text.replace('\n\n', '\n')
     if system_text == '':
         res = ollama.generate(model="qwen2.5:72b-instruct", prompt=prompt_text, options={"num_ctx": 30720,"num_predict":-1})
     else:
         res = ollama.generate(model="qwen2.5:72b-instruct", prompt=prompt_text, system=system_text,options={"num_ctx": 30720,"num_predict":-1})
     result = res['response']
-    result = result.replace('\n\n', '\n')
     return result
 ```
 
