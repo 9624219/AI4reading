@@ -23,6 +23,7 @@ async def case_feedback3(raw_doc,last_topic):
     prompt_text += topic_str
     prompt_text = prompt_text.replace('\n\n','\n')
     result = Deepseek_Generate(prompt_text, prompt_sys)
+    print(result)
     return result
 
 
@@ -52,6 +53,7 @@ def organize_case_feedback(raw_doc,full_case,case_demonstrate,case_expansion,org
             result_dict[key] = '是'
         else:
             result_dict[key] = result
+    print(result_dict)
     return result_dict
 
 
@@ -84,6 +86,7 @@ async def organize_case_feedback_content(raw_doc,full_case,case_demonstrate,case
             result_dict[key] = '是'
         else:
             result_dict[key] = result
+    print(result_dict)
     return result_dict
 
 '''
@@ -119,6 +122,7 @@ async def organize_case_feedback_logic(raw_doc,full_case,case_demonstrate,case_e
             result_dict[key] = '是'
         else:
             result_dict[key] = result
+    print(result_dict)
     return result_dict
 
 
@@ -149,6 +153,7 @@ async def organize_case_feedback_enlightening(raw_doc,full_case,case_demonstrate
             result_dict[key] = '是'
         else:
             result_dict[key] = result
+    print(result_dict)
     return result_dict
 
 
@@ -182,6 +187,7 @@ async def organize_refine(raw_doc,full_case,case_demonstrate,case_expansion,orga
             result = Deepseek_Generate(prompt_text, prompt_sys)
             new_dict[key] = result
     wrong_key_str = "<".join(wrong_key)
+    print(new_dict,wrong_key_str)
     return new_dict,wrong_key_str
 
 
@@ -207,6 +213,7 @@ async def oral_feedback(organize_text,oral_text):
             result_dict[key] = '是'
         else:
             result_dict[key] = result
+    print(result_dict)
     return result_dict
 
 # async def oral_refine(raw_doc,organize_text,oral_text,feedback):
@@ -232,6 +239,7 @@ async def oral_refine(raw_doc,organize_text,oral_text,feedback):
             result = Deepseek_Generate(prompt_text, prompt_sys)
             new_dict[key] = result
     wrong_key_str = "<".join(wrong_key)
+    print(new_dict,wrong_key_str)
     return new_dict,wrong_key_str
 
 

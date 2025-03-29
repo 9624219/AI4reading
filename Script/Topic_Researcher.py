@@ -24,6 +24,7 @@ async def topic_demonstrate(raw_doc,case_json):
         prompt_text = prompt_text.replace('\n\n', '\n')
         res = Deepseek_Generate(prompt_text, prompt_sys)
         result[key] = res
+    print(result)
     return result
 
 
@@ -47,4 +48,5 @@ async def topic_expansion(raw_doc,case_json,topic_demonstrate):
         prompt_text = prompt_text.replace('\n\n', '\n')
         res = Deepseek_Generate(prompt_text, prompt_sys)
         result[key] = res
+    print(result)
     return result

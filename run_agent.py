@@ -1,3 +1,4 @@
+import argparse
 import asyncio
 import re
 from metagpt.actions import Action, UserRequirement
@@ -13,9 +14,9 @@ from Script.proofreader import case_feedback3,compare_result,organize_case_feedb
 from Script.Topic_Researcher import topic_demonstrate,topic_expansion
 from Script.Editor import case_organize,case_assemble3,case_assemble2
 from Script.Narrator import case_change_style,oral_refine
-
-
+from pathlib import Path
 from pydantic import BaseModel
+
 
 class dict_message(BaseModel):
     content: dict
@@ -60,7 +61,7 @@ class CaseAnalyst(Role):
             self.case_dict = mes
             msg = Message(instruct_content=mes, role=self.profile, cause_by=type(todo), send_to=ProofReader)
         if todo.name == "GetDetailCase":
-            rsp_text = await todo.run(Lines,self.case_dict.content)  
+            rsp_text = await todo.run(Lines,self.case_dict.content)
             mes = dict_message(content=rsp_text)
             msg = Message(instruct_content=mes, role=self.profile, cause_by=type(todo))
         self.rc.env.publish_message(msg)
@@ -77,7 +78,6 @@ class TopicExpansion(Action):
     async def run(self, content: str,case_dict:dict,demonstrate_dict:dict):
         rsp = await topic_expansion(content,case_dict,demonstrate_dict)
         return rsp
-
 
 class TopicResearch(Role):
     name: str = "Topic-Research"
@@ -128,7 +128,6 @@ class CaseOrganizeLogic(Action):
     async def run(self, content: str,case_dict:dict,demonstrate_dict:dict,insight_dict:dict,organize_dict:dict):
         rsp = await organize_case_feedback_logic(content,case_dict,demonstrate_dict,insight_dict,organize_dict)
         return rsp
-
 
 class OralFeedback(Action):
     name: str = "OralFeedback"
@@ -202,7 +201,8 @@ class ProofReaderFinal(Role):
             rsp_text = await todo.run(Lines, final_text)
             if rsp_text == "是":
                 self.expression_cnt += 1
-                f3 = open("", "a", encoding="utf-8", errors="ignore")
+                print("-------------------Final---------------------")
+                f3 = open(Path(args.output_file), "a", encoding="utf-8", errors="ignore")
                 f3.write(self.final_text+'\n')
                 f3.close()
                 print(self.final_text)
@@ -224,7 +224,10 @@ class ProofReaderFinal(Role):
                 self.rc.env.publish_message(msg)
                 return msg
             else:
-                f3 = open("", "a", encoding="utf-8", errors="ignore")
+                print("-------------------Final---------------------")
+                print(self.final_text)
+                print("-------------------Final---------------------")
+                f3 = open(Path(args.output_file), "a", encoding="utf-8", errors="ignore")
                 f3.write(self.final_text+'\n')
                 f3.close()
 class FinalFeedbackRefine(Action):
@@ -348,7 +351,7 @@ class ProofReader(Role):
             return msg
         elif todo.name == "CaseOrganizeLogic":
             context2 = self.get_memories()
-            if self.start_logic == False:  # 第一次
+            if self.start_logic == False:
                 case_organize_dict = context2[-1].instruct_content.content
                 self.case_organize_dict = case_organize_dict
                 rsp_text = await todo.run(Lines,self.case_dict,self.case_demonstrate,self.case_expansion,self.case_organize_dict)
@@ -372,7 +375,6 @@ class ProofReader(Role):
                 new_case_demonstrate = {key: self.case_demonstrate[key] for key in wrong_key_list}
                 new_case_expansion = {key: self.case_expansion[key] for key in wrong_key_list}
                 new_case_organize_dict = {key: case_organize_dict[key] for key in wrong_key_list}
-                # 反馈结果 dict
                 return_dict = {}
                 if self.logic_cnt<2:
                     rsp_text = await todo.run(Lines, new_case_dict, new_case_demonstrate, new_case_expansion,
@@ -449,8 +451,7 @@ class CaseOrganizeRefine(Action):
 class CaseAssemble(Action):
     name: str = "CaseAssemble"
     async def run(self, content: str,oral_dict:dict):
-        rsp = await case_assemble2(content,oral_dict)
-        #rsp = await case_assemble3(content,oral_dict)
+        rsp = await case_assemble3(content,oral_dict)
         return rsp
 class Compiler(Role):
     name: str = "Compiler"
@@ -484,7 +485,6 @@ class Compiler(Role):
             mes = dict_message(content=rsp_text)
             msg = Message(instruct_content=mes, role=self.profile, cause_by=type(todo),send_to=ProofReader)
             self.organize_dict = rsp_text
-
             self.rc.env.publish_message(msg)
             return msg
         elif todo.name == "CaseAssemble":
@@ -570,3 +570,21 @@ async def main(Lines):
         Message(content=Lines))
     while not env.is_idle:
         await env.run()
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Process text files and generate results.")
+    parser.add_argument("input_file", type=str, help="Path to the input text file")
+    parser.add_argument("output_file", type=str, help="Path to the output result file")
+    args = parser.parse_args()
+    print(f"Input file: {args.input_file}")
+    print(f"Output file: {args.output_file}")
+    input_path = Path(args.input_file)
+    if not input_path.is_file():
+        print(f"Error: Input file '{args.input_file}' does not exist.")
+        exit(1)
+    try:
+        Lines = open(input_path, 'r', encoding='utf-8').read()
+    except Exception as e:
+        print(f"Error reading input file: {e}")
+        exit(1)
+    asyncio.run(main(Lines))

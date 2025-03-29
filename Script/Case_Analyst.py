@@ -22,6 +22,7 @@ def do_case_description(raw_doc,topics,brief):
 """
     prompt_text = prompt_text.replace('\n\n','\n')
     result = Deepseek_Generate(prompt_text, prompt_sys)
+    print(result)
     return result
 
 async def Case_Description(raw_doc,topics_json):
@@ -29,7 +30,7 @@ async def Case_Description(raw_doc,topics_json):
     for key,value in topics_json.items():
         case = do_case_description(raw_doc, key, value)
         case_dict[key] = case
-
+    print(case_dict)
     return case_dict
 
 
@@ -52,5 +53,6 @@ JSON格式的key为生成的核心主题，value为找到的案例内容。
     prompt_text = prompt_text.replace('\n\n', '\n')
     result = Deepseek_Generate(prompt_text, prompt_sys)
     json_result = json.loads(result)
+    print(json_result)
     return json_result
 

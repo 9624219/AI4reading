@@ -26,6 +26,7 @@ async def case_change_style(case_dict):
         prompt_text = prompt_text.replace('\n\n', '\n')
         result = Deepseek_Generate(prompt_text, prompt_sys)
         result_dict[key] = result
+    print(result_dict)
     return result_dict
 
 
@@ -51,4 +52,5 @@ async def oral_refine(organize_text,oral_text,feedback):
             result = Deepseek_Generate(prompt_text, prompt_sys)
             new_dict[key] = result
     wrong_key_str = "<".join(wrong_key)
+    print(new_dict,wrong_key_str)
     return new_dict,wrong_key_str

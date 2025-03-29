@@ -23,13 +23,7 @@ pip install -r requirement.txt
 - For Ollama users, you need to download the corresponding model and change the model in ollama.generate in the utils.chat file. Here is an example
 
 ```python
-def Qwen_Generate(prompt_text,system_text):
-    if system_text == '':
-        res = ollama.generate(model="qwen2.5:72b-instruct", prompt=prompt_text, options={"num_ctx": 30720,"num_predict":-1})
-    else:
-        res = ollama.generate(model="qwen2.5:72b-instruct", prompt=prompt_text, system=system_text,options={"num_ctx": 30720,"num_predict":-1})
-    result = res['response']
-    return result
+ollama.generate(model="qwen2.5:72b-instruct", prompt=prompt_text, options={"num_ctx": 30720,"num_predict":-1})
 ```
 
 - For users of other api services, you need to fill in the "api_key" and “base_url” in utils.chat.
